@@ -768,9 +768,7 @@ def exportTable(pointerToMainTable):
 
 
 
-def exportFile ():
-    with open(file_path, "rb") as f:
-        file=f.read()
+def exportFile (file):
     global hexFile
     hexFile=(binascii.hexlify(file))
     global fileSize
@@ -787,8 +785,7 @@ def exportFile ():
     exportDict.update(exportTable (pointerToMainTable))
 
 
-    with open(file_name +'.json', 'w', encoding='utf8') as file:
-        json.dump(exportDict, file, indent=2, ensure_ascii=False)
+    return exportDict
 
 
 
@@ -848,17 +845,15 @@ def storeJSONInfo (data):
 
 
     
-def rebuildFile ():
-    with open(file_path, 'r', encoding='utf8') as file:
-        data = json.load(file)
-        global rebuildFileTemp
-        
-        initializeRebuildFile (data['VERSION'], data['REVISION'])
-        importTable (data)
+def rebuildFile (file):
+    data = json.load(file)
+    global rebuildFileTemp
+    
+    initializeRebuildFile (data['VERSION'], data['REVISION'])
+    importTable (data)
 
+    return rebuildFileTemp
 
-        with open(file_name +'.bin', 'wb') as file:
-            file.write(rebuildFileTemp)
 
 
 
@@ -1205,12 +1200,25 @@ file_extension = file_name.split(".")[-1]
 
 
 def determineFileExtension(file_extension): #Switch case based on the file extension
-    switch = {
-        "bin" : exportFile,
-        "json" : rebuildFile
-    }
-    func = switch.get(file_extension.lower(), lambda: "Extension not supported")
-    return func()
+    ext = file_extension.lower()
+    
+    if ext == "bin":
+        with open(file_path, "rb") as f:
+            file=f.read()
+        
+        exportDict = exportFile(file)
+        
+        with open(file_name +'.json', 'w', encoding='utf8') as file:
+            json.dump(exportDict, file, indent=2, ensure_ascii=False)
+    
+    elif ext == "json":
+        with open(file_path, 'r', encoding='utf8') as f:
+            file = json.load(f)
+        
+        rebuildFileTemp = rebuildFile(file)
+        
+        with open(file_name +'.bin', 'wb') as file:
+            file.write(rebuildFileTemp)
 
 
 determineFileExtension(file_extension)
