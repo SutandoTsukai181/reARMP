@@ -845,8 +845,7 @@ def storeJSONInfo (data):
 
 
     
-def rebuildFile (file):
-    data = json.load(file)
+def rebuildFile (data):
     global rebuildFileTemp
     
     initializeRebuildFile (data['VERSION'], data['REVISION'])
