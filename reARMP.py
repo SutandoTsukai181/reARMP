@@ -1194,9 +1194,6 @@ def importTable (data):
 
 
 
-file_path = sys.argv[1:][0]
-file_name = file_path.split("\\")[-1]
-file_extension = file_name.split(".")[-1]
 
 
 def determineFileExtension(file_extension): #Switch case based on the file extension
@@ -1221,4 +1218,10 @@ def determineFileExtension(file_extension): #Switch case based on the file exten
             file.write(rebuildFileTemp)
 
 
-determineFileExtension(file_extension)
+if __name__ == '__main__':
+
+    file_path = sys.argv[1:][0]
+    file_name = file_path.split("\\")[-1]
+    file_extension = file_name.split(".")[-1]
+
+    determineFileExtension(file_extension)
